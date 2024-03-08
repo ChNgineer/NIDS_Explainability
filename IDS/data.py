@@ -1,30 +1,22 @@
 import pandas as pd
-import torch
 from torch.utils.data import Dataset
+from tqdm import tqdm
 
 class CICDDoS2019Dataset(Dataset):
-    def __init__(self, csv_file, root_dir, transform=None):
-        """
-        Arguments:
-            csv_file (string): Path to the csv file with annotations.
-            root_dir (string): Directory with all the images.
-            transform (callable, optional): Optional transform to be applied
-                on a sample.
-        """
-        self.data = pd.read_csv(csv_file)
-        self.root_dir = root_dir
-        self.transform = transform
-
+    def __init__(self, dirs):
+        dfs = {}
+        for dir in tqdm(dirs, desc='dirs'):
+            for f in tqdm(dir.iterdir(), desc='files', leave=False):
+                dfs[f.name] = pd.read_csv(f, dtype={"SimillarHTTP":"string"})
+                dfs[f.name].rename(columns=lambda x: x.strip(), inplace=True)
+                dfs[f.name].drop(columns=["Unnamed: 0"], inplace=True)
+        self.data = pd.concat(dfs.values(), ignore_index=True)
+        self.labels = self.data['Label']
+        
     def __len__(self):
         return len(self.data)
-
+    
     def __getitem__(self, idx):
-        if torch.is_tensor(idx):
-            idx = idx.tolist()
-
-        sample = self.data[idx]
-
-        if self.transform:
-            sample = self.transform(sample)
-
-        return sample
+        return self.data.iloc[idx]
+    
+        
