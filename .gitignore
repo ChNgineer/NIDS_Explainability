@@ -1,3 +1,9 @@
 *.zip
 *.csv
+DDoS Evaluation Dataset (CIC-DDoS2019)
+Processed Data
+Processed Data *
+training_metrics
+saved_models
 __pycache__
+.venv

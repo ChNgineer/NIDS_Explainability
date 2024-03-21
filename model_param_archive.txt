@@ -1,0 +1,17 @@
+sequence_model
+features: packet_sequence (size: 64)
+kernel_sizes = [5,5]
+channel_size: feature_size (sequence_size: 64) for all conv channels
+batch_size: 32
+learning_rate: 0.0001
+epochs: 500
+data: CICDDoS2019Dataset(dir_path, 64, F.normalize, [2.0,0], balanced=True, random_seed=42)
+
+baseline_model
+kernel_sizes = [3,3,5]
+features: packet_features
+channel_size: 1, 64, 64, 64
+batch_size: 256
+learning_reate: 0.0001
+epochs: 500
+data: CICDDoS2019Dataset(dir_path, transform=F.normalize, transform_args=[2.0,0], balanced=True, random_seed=774)
